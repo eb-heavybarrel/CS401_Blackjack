@@ -1,3 +1,6 @@
+#eclipse
 .project
 
+#temporary files
 ~$*
+~*.tmp
