@@ -2,6 +2,9 @@
 .project
 
 #temporary files
-~$*     #  MS Office
-.~LOCK* #  libreOffice
+#  MS Office
+~$*     
 ~*.tmp
+
+#  libreOffice
+.~LOCK* 
