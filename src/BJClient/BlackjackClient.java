@@ -1,4 +1,4 @@
-package client;
+package BJClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
