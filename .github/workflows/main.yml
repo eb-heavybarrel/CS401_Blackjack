@@ -30,7 +30,7 @@ jobs:
           javac -cp .:junit-platform-console-standalone-6.0.2.jar src/**/*.java -d out
       - name: Run JUnit tests
         run: |
-          java -cp out:junit-platform-console-standalone-6.0.2.jar org.junit.platform.console.ConsoleLauncher discover --class-path out
+          java -cp out:junit-platform-console-standalone-6.0.2.jar org.junit.platform.console.ConsoleLauncher discover
       - name: Build and Run Tests
         run: '*/test/*'
       - name: Publish Test Report
