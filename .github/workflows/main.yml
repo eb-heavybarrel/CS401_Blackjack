@@ -35,6 +35,10 @@ jobs:
       - name: Run JUnit tests
         run: |
           java -cp out:junit-platform-console-standalone-6.0.2.jar org.junit.platform.console.ConsoleLauncher discover --scan-class-path out --details verbose
+      - name: View current Directory
+        run: |
+          echo "Contents of current directory:"
+          ls -R
       - name: View Test Report Directory
         run: |
           echo "Contents of the report directory:"
