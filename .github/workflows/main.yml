@@ -28,6 +28,9 @@ jobs:
       - name: Compile Java code
         run: |
           javac -cp .:junit-platform-console-standalone-6.0.2.jar src/**/*.java -d out
+      - name: Copy properties file
+        run: |
+          cp src/test/resources/junit-platform.properties out/
       - name: Run JUnit tests
         run: |
           java -cp out:junit-platform-console-standalone-6.0.2.jar org.junit.platform.console.ConsoleLauncher execute --scan-class-path out --details verbose
