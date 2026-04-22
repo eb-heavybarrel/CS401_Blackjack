@@ -18,8 +18,11 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
-      - name: Set Permissions
-        run: chmod +x src/test/*Test.java
+      - name: Setup JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21' # or whatever version you need
+          distribution: 'adopt'
       - name: Build and Run Tests
         run: '*/test/*'
       - name: Publish Test Report
