@@ -43,3 +43,8 @@ jobs:
         if: success() || failure() # always run even if the previous step fails
         with:
           report_paths: 'report/*.xml'
+      - name: Upload Test Report Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: junit-test-report
+          path: report/open-test-report.xml
