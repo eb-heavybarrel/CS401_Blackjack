@@ -23,6 +23,12 @@ jobs:
         with:
           java-version: '21' # or whatever version you need
           distribution: 'adopt'
+      - name: Compile Java code
+        run: |
+          javac -cp .:junit-platform-console-standalone-6.0.2.jar src/**/*.java -d out
+      - name: Run JUnit tests
+        run: |
+          java -cp out:junit-platform-console-standalone-6.0.2.jar org.junit.platform.console.ConsoleLauncher --scan-classpath
       - name: Build and Run Tests
         run: '*/test/*'
       - name: Publish Test Report
