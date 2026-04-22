@@ -28,6 +28,8 @@ jobs:
       - name: Compile Java code
         run: |
           javac -cp .:junit-platform-console-standalone-6.0.2.jar src/**/*.java -d out
+      - name: Set Permissions
+        run: chmod +x out/test/*.class
       - name: Run JUnit tests
         run: |
           java -cp out:junit-platform-console-standalone-6.0.2.jar org.junit.platform.console.ConsoleLauncher discover --scan-class-path out
