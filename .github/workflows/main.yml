@@ -33,14 +33,14 @@ jobs:
           cp src/test/resources/junit-platform.properties out/
       - name: Run JUnit tests
         run: |
-          java -cp out:junit-platform-console-standalone-6.0.2.jar org.junit.platform.console.ConsoleLauncher execute --classpath out/test --select-class AllTests --details verbose
+          java -cp out:junit-platform-console-standalone-6.0.2.jar org.junit.platform.console.ConsoleLauncher execute --classpath out/test --select-file=AllTests --exclude junit-vintage --details verbose 
       - name: View current Directory
         run: |
           echo "Contents of current directory:"
           ls -R
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v6.4.0
-        if: success() || failure() # always run even if the previous step fails
+        if: success(Run JUnit tests)
         with:
           report_paths: 'report/*.xml'
       - name: Upload Test Report Artifact
