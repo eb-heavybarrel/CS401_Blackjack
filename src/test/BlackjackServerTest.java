@@ -45,5 +45,11 @@ class BlackjackServerTest {
 //	void testMain() {
 //		//fail("Not yet implemented");
 //	}
+	
+	@Test
+	void test() {
+		assertTrue(true);
+	}
+
 
 }
