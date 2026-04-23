@@ -33,7 +33,7 @@ jobs:
           cp src/test/resources/junit-platform.properties out/
       - name: Run JUnit tests
         run: |
-          java -cp out:junit-platform-console-standalone-6.0.2.jar org.junit.platform.console.ConsoleLauncher execute --class test.AllTests --details verbose
+          java -cp out:junit-platform-console-standalone-6.0.2.jar org.junit.platform.console.ConsoleLauncher execute --scan-class-path out --details verbose
       - name: View current Directory
         run: |
           echo "Contents of current directory:"
