@@ -44,7 +44,7 @@ jobs:
         with:
           report_paths: 'report/*.xml'
       - name: Upload Test Report Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: junit-test-report
           path: report/open-test-report.xml
