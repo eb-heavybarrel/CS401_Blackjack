@@ -1,10 +1,10 @@
 package main;
 
 public enum MessageClass {
-	USER,
-	TABLE,
-	CAME,
-	//SHOE,
-	HAND,
-	CARD,
+	User,
+	Table,
+	Game,
+	Shoe,
+	Hand,
+	Card,
 }
