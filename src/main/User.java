@@ -2,18 +2,20 @@ package main;
 
 public class User {
 	public static int count = 0;
-	private int ID;
+	//private int ID;
 	private String userName;
 	private String password;
 	private UserRole role;
 	private float credits;
+	private boolean isLoggedIn = false;
 	
 	public User(String name, String pwd, UserRole role) {
-		this.ID = ++count;
+		//this.ID = ++count;
 		this.userName = name;
 		this.password = pwd;
 		this.role = role;
 		this.credits = 0;
+		this.isLoggedIn = false;
 	}
 
 	//Setters
@@ -67,12 +69,16 @@ public class User {
 		//needs to be implemented
 	}
 	
-	public boolean authenicateUser(String userName, String pwd) {
-		if (this.userName.equals(userName) && this.password.equals(pwd)) {
-			return true;
+	public void login(String userName, String pwd) {
+		if (userName.equals(userName) && password.equals(pwd)) {
+			this.isLoggedIn = true;
 		}
+	}
 		
-		return false;
+	public void logout(String userName) {
+		if (this.userName.equals(userName)) {
+			this.isLoggedIn = false;
+		}
 	}
 	
 }
