@@ -1,0 +1,50 @@
+name: Java CI
+
+permissions:
+    contents: write
+    checks: write
+    id-token: write
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build and Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+      - name: Setup JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21' # or whatever version you need
+          distribution: 'adopt'
+      - name: Download JUnit JAR
+        run: curl -L -o junit-platform-console-standalone-6.0.2.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/6.0.2/junit-platform-console-standalone-6.0.2.jar
+      - name: Compile Java code
+        run: |
+          javac -cp .:junit-platform-console-standalone-6.0.2.jar src/**/*.java -d out
+      - name: Copy properties file
+        run: |
+          cp src/test/resources/junit-platform.properties out/
+      - name: Run JUnit tests
+        run: |
+          java -cp out:junit-platform-console-standalone-6.0.2.jar org.junit.platform.console.ConsoleLauncher execute --classpath out/test --select-file=AllTests --exclude junit-vintage --details verbose 
+      - name: View current Directory
+        run: |
+          echo "Contents of current directory:"
+          ls -R
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v6.4.0
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          report_paths: 'report/*.xml'
+      - name: Upload Test Report Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: junit-test-report
+          path: report/open-test-report.xml

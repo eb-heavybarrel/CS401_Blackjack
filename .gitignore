@@ -1,5 +1,6 @@
 #eclipse
 .project
+.classpath
 
 #temporary files
 #  MS Office
@@ -8,3 +9,4 @@
 
 #  libreOffice
 .~LOCK* 
+/bin/
