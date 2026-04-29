@@ -5,10 +5,10 @@ public class Card {
 	private CardValue cardValue;
 	private CardLocation location;
 	
-	public Card (CardSuit cardSuit, CardValue cardValue, CardLocation location) {
+	public Card (CardSuit cardSuit, CardValue cardValue) {
 		this.cardSuit = cardSuit;
 		this.cardValue = cardValue;
-		this.location = location;
+		this.location = CardLocation.SHOE;
 	}
 	
 	public CardSuit getSuit() {
@@ -20,4 +20,8 @@ public class Card {
 	public CardLocation getLocation() {
 		return this.location;
 	}
+	public CardLocation Location (CardLocation location){
+		return this.location = location;
+	}
+	
 }

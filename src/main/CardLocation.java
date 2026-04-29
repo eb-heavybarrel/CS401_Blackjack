@@ -10,7 +10,7 @@ public enum CardLocation {
 	PLAYER4("player4", 4),
 	PLAYER5("player5", 5),
 	PLAYER6("player6", 6),
-	UNPLAYED("shoe", 7);
+	SHOE("shoe", 7);
 	
     String locationName;
     int locationNumber;
