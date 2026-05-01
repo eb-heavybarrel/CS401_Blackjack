@@ -9,6 +9,15 @@ public class User {
 	private float credits;
 	private boolean isLoggedIn = false;
 	
+	public User(String name, String pwd) {
+		//this.ID = ++count;
+		this.userName = name;
+		this.password = pwd;
+		this.role = UserRole.PLAYER;
+		this.credits = 0;
+		this.isLoggedIn = false;
+	}
+	
 	public User(String name, String pwd, UserRole role) {
 		//this.ID = ++count;
 		this.userName = name;
@@ -28,9 +37,9 @@ public class User {
 	}
 
 	//Getters
-	public int getID() {
-		return ID;
-	}
+//	public int getID() {
+//		return ID;
+//	}
 
 	public String getUserName() {
 		return userName;
@@ -42,6 +51,11 @@ public class User {
 
 	public float getCredits() {
 		return credits;
+		//how do we need trigger a message to client here current Credits
+	}
+	
+	public boolean getLoginStatus() {
+		return isLoggedIn;
 	}
 	
 	//Incrementers
@@ -54,11 +68,12 @@ public class User {
 	}
 	
 	//Others
-	public void changePassword(String oldPwd, String newPwd) {
+	public boolean changePassword(String oldPwd, String newPwd) {
 		if (oldPwd.equals(password)) {
 			password = newPwd;
+			return true;
 		}
-
+		return false;
 	}
 	
 	public void loadUser(String userName) {
@@ -69,16 +84,17 @@ public class User {
 		//needs to be implemented
 	}
 	
-	public void login(String userName, String pwd) {
-		if (userName.equals(userName) && password.equals(pwd)) {
-			this.isLoggedIn = true;
+	public boolean login(String pwd) {
+		if (password.equals(pwd)) {
+			isLoggedIn = true;
+			//do we need trigger a message to client here  with userRole,Credits
 		}
+		return isLoggedIn;
 	}
 		
-	public void logout(String userName) {
-		if (this.userName.equals(userName)) {
+	public boolean logout() {
 			this.isLoggedIn = false;
+			return isLoggedIn;
 		}
-	}
 	
 }
