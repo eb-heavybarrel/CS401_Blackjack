@@ -1,19 +1,30 @@
 package main;
 
 public class User {
-	public static int count = 0;
-	private int ID;
+	//public static int count = 0;
+	//private int ID;
 	private String userName;
 	private String password;
 	private UserRole role;
 	private float credits;
+	private boolean isLoggedIn = false;
+	
+	public User(String name, String pwd) {
+		//this.ID = ++count;
+		this.userName = name;
+		this.password = pwd;
+		this.role = UserRole.PLAYER;
+		this.credits = 0;
+		this.isLoggedIn = false;
+	}
 	
 	public User(String name, String pwd, UserRole role) {
-		this.ID = ++count;
+		//this.ID = ++count;
 		this.userName = name;
 		this.password = pwd;
 		this.role = role;
 		this.credits = 0;
+		this.isLoggedIn = false;
 	}
 
 	//Setters
@@ -26,9 +37,9 @@ public class User {
 	}
 
 	//Getters
-	public int getID() {
-		return ID;
-	}
+//	public int getID() {
+//		return ID;
+//	}
 
 	public String getUserName() {
 		return userName;
@@ -40,6 +51,11 @@ public class User {
 
 	public float getCredits() {
 		return credits;
+		//how do we need trigger a message to client here current Credits
+	}
+	
+	public boolean getLoginStatus() {
+		return isLoggedIn;
 	}
 	
 	//Incrementers
@@ -52,11 +68,12 @@ public class User {
 	}
 	
 	//Others
-	public void changePassword(String oldPwd, String newPwd) {
+	public boolean changePassword(String oldPwd, String newPwd) {
 		if (oldPwd.equals(password)) {
 			password = newPwd;
+			return true;
 		}
-
+		return false;
 	}
 	
 	public void loadUser(String userName) {
@@ -67,12 +84,17 @@ public class User {
 		//needs to be implemented
 	}
 	
-	public boolean authenicateUser(String userName, String pwd) {
-		if (this.userName.equals(userName) && this.password.equals(pwd)) {
-			return true;
+	public boolean login(String pwd) {
+		if (password.equals(pwd)) {
+			isLoggedIn = true;
+			//do we need trigger a message to client here  with userRole,Credits
 		}
-		
-		return false;
+		return isLoggedIn;
 	}
+		
+	public boolean logout() {
+			this.isLoggedIn = false;
+			return isLoggedIn;
+		}
 	
 }
