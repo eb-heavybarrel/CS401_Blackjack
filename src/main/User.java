@@ -59,10 +59,13 @@ public class User {
 	}
 	
 	//Incrementers
+	
+	//need to check for positive float
 	public void incrementCredits(float credits) {
 		this.credits += credits;
 	}
 
+	//need to check for positive float
 	public void decrementCredits(float credits) {
 		this.credits -= credits;
 	}
