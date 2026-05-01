@@ -2,15 +2,22 @@ package main;
 
 public class Shoe {
 	
-	private Card[] shoe;
+	private Card[] cards;
 	private int shoeSize;
+	private int cardsRemaining;
 	
 	public Shoe(int shoeSize) {
 		this.shoeSize = shoeSize;
 	
 	}
 	
-	public void shuffleShoe() {
+	public void shuffle(Card[] cards) {
+		
+	}
+	public void generateDeck() {
+		
+	}
+	public void isPlayed(Card card){
 		
 	}
 }
