@@ -1,11 +1,17 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageHandler {
 	//These variables may move to server later.
-	List<User> users;
+	ArrayList<User> users = new ArrayList<>();
+	//List<User> users;
 	//List<Table> tables;
+	
+	public MessageHandler(ArrayList<User> users) {
+		this.users = users;
+	}
 	
 
 	//begin--------------- Verify Messages ---------------//
@@ -62,7 +68,7 @@ public class MessageHandler {
 	//end--------------- Verify Messages ---------------//
 
     
-    //Handle Class -----
+    //Handle Message Class -----
     
 	public void handleClass(Message message) {
         switch (message.getmClass()) {
@@ -88,7 +94,7 @@ public class MessageHandler {
                 System.out.println("No handler for message Class: " + message.getmClass());
                 break;
         }
-    }
+	}
     
     
     //begin--------------- Handle by Type ---------------//
@@ -106,7 +112,7 @@ public class MessageHandler {
 		User user;
 		String username;
 		String password;
-		UserRole role;
+		//UserRole role;
 		float credits;
 
 		switch (message.getmType()) {

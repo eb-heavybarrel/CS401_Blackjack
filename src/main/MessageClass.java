@@ -3,7 +3,7 @@ package main;
 public enum MessageClass {
 	USER,
 	TABLE,
-	CAME,
+	GAME,
 	//SHOE,
 	HAND,
 	CARD,
