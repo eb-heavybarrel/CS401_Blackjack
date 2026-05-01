@@ -29,7 +29,7 @@ class UserTest {
 	void setUp() throws Exception {
 		player = new User("player", "superSecret");
 		dealer = new User("dealer", "password123", UserRole.DEALER);
-		dealer.incrementCredits(50.3f);
+		//dealer.incrementCredits(50.3f);
 		developer = new User("developer", "luggagecobination", UserRole.DEVELOPER);
 	}
 
@@ -84,10 +84,12 @@ class UserTest {
 
 	@Test
 	void testDecrementCredits() {
-		float startingCredits = 50.3f;
-		float removeCredits = 21.3f;
-		dealer.incrementCredits(removeCredits);
-		assertEquals(startingCredits + removeCredits, player.getCredits());
+		float creditsadded = 50.3f;
+		float creditsremoved = 21.3f;
+		float finalCredits = creditsadded - creditsremoved;
+		dealer.incrementCredits(creditsadded);
+		dealer.decrementCredits(creditsremoved);
+		assertEquals(finalCredits, dealer.getCredits(), 0.1f);
 	}
 
 	@Test
@@ -120,7 +122,7 @@ class UserTest {
 		if (player.getLoginStatus()) {
 			player.logout();
 		}
-		assertTrue(player.getLoginStatus());
+		assertFalse(player.getLoginStatus());
 	}
 
 }

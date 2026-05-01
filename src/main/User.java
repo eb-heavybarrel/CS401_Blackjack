@@ -1,7 +1,7 @@
 package main;
 
 public class User {
-	public static int count = 0;
+	//public static int count = 0;
 	//private int ID;
 	private String userName;
 	private String password;
