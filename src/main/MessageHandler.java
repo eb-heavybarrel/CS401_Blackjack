@@ -5,19 +5,20 @@ import java.util.List;
 
 public class MessageHandler {
 	//These variables may move to server later.
-	ArrayList<User> users = new ArrayList<>();
+	//ArrayList<User> users = new ArrayList<>();
 	//List<User> users;
 	//List<Table> tables;
 	
-	public MessageHandler(ArrayList<User> users) {
-		this.users = users;
+	//public MessageHandler(ArrayList<User> users) {
+	public MessageHandler() {
+		//this.users = users;
 	}
 	
 
 	//begin--------------- Verify Messages ---------------//
 	
 	//verify message length and that each object is of the correct type.
-    private String verifyMessage(Message message, int size, List<Class<?>> types) {
+    protected String verifyMessage(Message message, int size, List<Class<?>> types) {
 
         String sizeResult = verifyMessageSize(message, size);
         String typeResult = verifyMessageTypes(message, size, types);
@@ -131,39 +132,47 @@ public class MessageHandler {
 			credits = (float) data.get(1);
 			
 			//actions
-			for (int i = 0; i < users.size(); i++) {
-				if (users.get(i).getUserName().equals(username)) {
-					user = users.get(i);
-					credits = user.getCredits();
-					
-					//how do we need trigger a message to client here current Credits
-				}
-				//is else needed? isloggedIn should remain false.
-			}
+//			for (int i = 0; i < users.size(); i++) {
+//				if (users.get(i).getUserName().equals(username)) {
+//					user = users.get(i);
+//					credits = user.getCredits();
+//					
+//					//how do we need trigger a message to client here current Credits
+//				}
+//				//is else needed? isloggedIn should remain false.
+//			}
 			break;
 		case MessageType.USER_LOGIN:
-			//verify
-			expectedSize = 2;
-			expectedTypes = List.of(String.class, String.class);
-			resultsOfVerify = verifyMessage(message, expectedSize, expectedTypes);
-			if (!resultsOfVerify.equals("true")) {
-				//send to logger once complete
-				System.out.println("User Login failed: -----\n" + resultsOfVerify);
-			}
-			
-			//extract data
-			username = (String) data.get(0);
-			password = (String) data.get(1);
-			
-			//actions
-			for (int i = 0; i < users.size(); i++) {
-				if (users.get(i).getUserName().equals(username)) {
-					user = users.get(i);
-					user.login(password);
-					//do we need trigger a message to client here  with userRole,Credits
-				}
-				//is else needed? isloggedIn should remain false.
-			}
+//			//verify
+//			expectedSize = 2;
+//			expectedTypes = List.of(String.class, String.class);
+//			resultsOfVerify = verifyMessage(message, expectedSize, expectedTypes);
+//			if (!resultsOfVerify.equals("true")) {
+//				//send to logger once complete
+//				System.out.println("User Login failed: -----\n" + resultsOfVerify);
+//			}
+//			
+//			//extract data
+//			username = (String) data.get(0);
+//			password = (String) data.get(1);
+//			
+//			//actions
+//			BlackjackServer instance = BlackjackServer.getInstance();
+//			if (instance.userLogin(username, password)) {
+//				//do we need trigger a message to client here  with userRole,Credits
+//			}
+//			else {
+//				//do we need trigger a message to client here  with failure.
+//			}
+//			
+//			for (int i = 0; i < users.size(); i++) {
+//				if (users.get(i).getUserName().equals(username)) {
+//					user = users.get(i);
+//					user.login(password);
+//					//do we need trigger a message to client here  with userRole,Credits
+//				}
+//				//is else needed? isloggedIn should remain false.
+//			}
 			break;
 		case MessageType.USER_lOGOUT:
 			//verify
@@ -179,12 +188,12 @@ public class MessageHandler {
 			username = (String) data.get(0);
 			
 			//actions
-			for (int i = 0; i < users.size(); i++) {
-				if (users.get(i).getUserName().equals(username)) {
-					user = users.get(i);
-					user.logout();
-				}
-			}
+//			for (int i = 0; i < users.size(); i++) {
+//				if (users.get(i).getUserName().equals(username)) {
+//					user = users.get(i);
+//					user.logout();
+//				}
+//			}
 			break;
 		 case MessageType.USER_INC_CREDIT:
 			expectedSize = 2;
@@ -200,12 +209,12 @@ public class MessageHandler {
 			credits = (float) data.get(0);
 			
 			//actions
-			for (int i = 0; i < users.size(); i++) {
-				if (users.get(i).getUserName().equals(username)) {
-					user = users.get(i);
-					user.incrementCredits(credits);
-				}
-			}
+//			for (int i = 0; i < users.size(); i++) {
+//				if (users.get(i).getUserName().equals(username)) {
+//					user = users.get(i);
+//					user.incrementCredits(credits);
+//				}
+//			}
 			break;
 		 case MessageType.USER_DEC_CREDIT:
 			expectedSize = 2;
@@ -221,12 +230,12 @@ public class MessageHandler {
 			credits = (float) data.get(0);
 			
 			//actions
-			for (int i = 0; i < users.size(); i++) {
-				if (users.get(i).getUserName().equals(username)) {
-					user = users.get(i);
-					user.decrementCredits(credits);
-				}
-			}
+//			for (int i = 0; i < users.size(); i++) {
+//				if (users.get(i).getUserName().equals(username)) {
+//					user = users.get(i);
+//					user.decrementCredits(credits);
+//				}
+//			}
 			break;
 		default:
 			//send to logger once complete

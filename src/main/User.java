@@ -1,12 +1,15 @@
 package main;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
+	private static final long serialVersionUID = 1L;  //Eclipse suggests we need this
 	//public static int count = 0;
 	//private int ID;
 	private String userName;
 	private String password;
 	private UserRole role;
-	private float credits;
+	private float credits = 1000.0f;
 	private boolean isLoggedIn = false;
 	
 	public User(String name, String pwd) {
@@ -14,8 +17,6 @@ public class User {
 		this.userName = name;
 		this.password = pwd;
 		this.role = UserRole.PLAYER;
-		this.credits = 0;
-		this.isLoggedIn = false;
 	}
 	
 	public User(String name, String pwd, UserRole role) {
@@ -23,8 +24,6 @@ public class User {
 		this.userName = name;
 		this.password = pwd;
 		this.role = role;
-		this.credits = 0;
-		this.isLoggedIn = false;
 	}
 
 	//Setters
@@ -88,11 +87,9 @@ public class User {
 	}
 	
 	public boolean login(String pwd) {
-		if (password.equals(pwd)) {
-			isLoggedIn = true;
-			//do we need trigger a message to client here  with userRole,Credits
-		}
-		return isLoggedIn;
+		System.out.println("User.login ran"); //troubleshooting
+	    isLoggedIn = password.equals(pwd);
+	    return isLoggedIn;
 	}
 		
 	public boolean logout() {

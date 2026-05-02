@@ -21,7 +21,7 @@ public enum MessageType {
 	USER_lOGOUT,
 	USER_LOGIN,
 	USER_INC_CREDIT,
-	USER_DEC_CREDIT,
+	USER_DEC_CREDIT
 	
 //	TABLE_DEALERID,
 //	TABLE_PLAYERID,
@@ -40,7 +40,7 @@ public enum MessageType {
 //	HAND_CARD,
 //	SHOE,
 	//remove these once message.java has been updated
-	LOGIN,
-	TEXT,
-	LOGOUT
+//	LOGIN,
+//	TEXT,
+//	LOGOUT
 }
