@@ -1,10 +1,14 @@
 package main;
 
 import java.awt.*;
+import java.io.*;
+import java.net.Socket;
 import javax.swing.*;
 
-//main lobby screen for players
-//shows available tables + basic actions
+// player lobby
+// shows available tables and basic account info
+// currently uses placeholder table data
+// connection is stored here for when table messaging gets added
 public class BlackjackLobbyGUI extends JFrame
 {
     private static final Color OUTER_GRAY = new Color(68, 68, 68);
@@ -30,17 +34,27 @@ public class BlackjackLobbyGUI extends JFrame
     private float credits;
     private String ipAddress;
 
+    private Socket socket;
+    private ObjectInputStream objIn;
+    private ObjectOutputStream objOut;
+
     public BlackjackLobbyGUI()
     {
-        this("Guest", UserRole.PLAYER, 1000.0f, "localhost");
+        this("Guest", UserRole.PLAYER, 1000.0f, "localhost", null, null, null);
     }
 
     public BlackjackLobbyGUI(String username, UserRole role, float credits)
     {
-        this(username, role, credits, "localhost");
+        this(username, role, credits, "localhost", null, null, null);
     }
 
     public BlackjackLobbyGUI(String username, UserRole role, float credits, String ipAddress)
+    {
+        this(username, role, credits, ipAddress, null, null, null);
+    }
+
+    public BlackjackLobbyGUI(String username, UserRole role, float credits, String ipAddress,
+            Socket socket, ObjectInputStream objIn, ObjectOutputStream objOut)
     {
         super("Blackjack Lobby");
 
@@ -48,13 +62,15 @@ public class BlackjackLobbyGUI extends JFrame
         this.role = role;
         this.credits = credits;
         this.ipAddress = ipAddress;
+        this.socket = socket;
+        this.objIn = objIn;
+        this.objOut = objOut;
 
         buildFrame();
         loadPlaceholderTables();
         configureForPlayer();
     }
 
- // sets up outer layout + main red container
     private void buildFrame()
     {
         JPanel outerPanel = new JPanel(new GridBagLayout());
@@ -76,7 +92,6 @@ public class BlackjackLobbyGUI extends JFrame
         setLocationRelativeTo(null);
     }
 
- // left side: table list (custom rendered rows)
     private JPanel buildTablePanel()
     {
         JPanel panel = new JPanel(new BorderLayout(0, 8));
@@ -107,7 +122,6 @@ public class BlackjackLobbyGUI extends JFrame
         return panel;
     }
 
- // right side: buttons + info display area
     private JPanel buildRightPanel()
     {
         JPanel panel = new JPanel(new BorderLayout(0, 24));
@@ -150,7 +164,6 @@ public class BlackjackLobbyGUI extends JFrame
         return panel;
     }
 
- // bottom bar: user info + join button
     private JPanel buildStatusPanel()
     {
         JPanel panel = new JPanel(new BorderLayout(8, 0));
@@ -187,7 +200,6 @@ public class BlackjackLobbyGUI extends JFrame
         return label;
     }
 
- // large gold buttons (funds / rules / sign out)
     private JButton makeTopButton(String text, int fontSize)
     {
         JButton button = new JButton("<html><center>" + text.replace("\n", "<br>") + "</center></html>");
@@ -199,7 +211,6 @@ public class BlackjackLobbyGUI extends JFrame
         return button;
     }
 
- // smaller action button (join table)
     private JButton makeSmallGoldButton(String text)
     {
         JButton button = new JButton(text);
@@ -212,23 +223,20 @@ public class BlackjackLobbyGUI extends JFrame
         return button;
     }
 
- // fake table data for now
- // temp table data until server is connected
     private void loadPlaceholderTables()
     {
-        tableListModel.clear();
-        tableListModel.addElement(new TableInfo("Table 1", 45, 100, 6));
-        tableListModel.addElement(new TableInfo("Table 2", 45, 25, 6));
-        tableListModel.addElement(new TableInfo("Table 3", 15, 10, 3));
-        tableListModel.addElement(new TableInfo("Table 4", 45, 650, 6));
-        tableListModel.addElement(new TableInfo("Table 5", 25, 850, 2));
-        tableListModel.addElement(new TableInfo("Table 6", 30, 200, 5));
-        tableListModel.addElement(new TableInfo("Table 7", 20, 50, 6));
-        tableListModel.addElement(new TableInfo("", 0, 0, 6));
-        tableListModel.addElement(new TableInfo("", 0, 0, 6));
+        // fake table list so the UI has something to render
+        // this should eventually come from the server
+tableListModel.clear();
+        tableListModel.addElement(new TableInfo(1, "Table 1", 45, 100, 6));
+        tableListModel.addElement(new TableInfo(2, "Table 2", 45, 25, 6));
+        tableListModel.addElement(new TableInfo(3, "Table 3", 15, 10, 3));
+        tableListModel.addElement(new TableInfo(4, "Table 4", 45, 650, 6));
+        tableListModel.addElement(new TableInfo(5, "Table 5", 25, 850, 2));
+        tableListModel.addElement(new TableInfo(6, "Table 6", 30, 200, 5));
+        tableListModel.addElement(new TableInfo(7, "Table 7", 20, 50, 6));
     }
 
- // ensures only players use lobby
     private void configureForPlayer()
     {
         if (role != UserRole.PLAYER)
@@ -237,12 +245,11 @@ public class BlackjackLobbyGUI extends JFrame
         }
     }
 
- // validates selection + opens player table
     private void joinSelectedTable()
     {
         TableInfo selectedTable = tableList.getSelectedValue();
 
-        if (selectedTable == null || selectedTable.name.trim().isEmpty())
+        if (selectedTable == null)
         {
             statusLabel.setText("Select a table first.");
             return;
@@ -253,13 +260,21 @@ public class BlackjackLobbyGUI extends JFrame
             statusLabel.setText(selectedTable.name + " is FULL.");
             return;
         }
+        // checks selected table and blocks if FULL
+        // right now just opens the player table locally
+        // later this should ask the server before allowing entry
+BlackjackPlayerTableGUI playerTable = new BlackjackPlayerTableGUI(
+                username,
+                credits,
+                selectedTable,
+                socket,
+                objIn,
+                objOut);
 
-        BlackjackPlayerTableGUI playerTable = new BlackjackPlayerTableGUI(username, credits, selectedTable);
         playerTable.setVisible(true);
         dispose();
     }
 
- // displays blackjack rules in info panel
     private void showRules()
     {
         infoArea.setText(
@@ -271,10 +286,11 @@ public class BlackjackLobbyGUI extends JFrame
                 + "- Actions: hit, stand, double down, split, surrender, insurance.");
     }
 
- // simple credit add (temporary local logic)
     private void addFunds()
     {
-        String amountText = JOptionPane.showInputDialog(this, "Amount to add:");
+        // temporary local credit change
+        // server-side credit handling isn’t wired yet
+String amountText = JOptionPane.showInputDialog(this, "Amount to add:");
 
         if (amountText == null)
         {
@@ -293,7 +309,7 @@ public class BlackjackLobbyGUI extends JFrame
 
             credits += amount;
             creditsLabel.setText("Credits: " + credits);
-            infoArea.setText("Funds updated.\n\nCurrent credits: " + credits);
+            infoArea.setText("Funds updated locally.\n\nCurrent credits: " + credits);
         }
         catch (NumberFormatException e)
         {
@@ -301,8 +317,6 @@ public class BlackjackLobbyGUI extends JFrame
         }
     }
 
-    
- // returns user to login screen
     private void confirmSignOut()
     {
         int choice = JOptionPane.showConfirmDialog(
@@ -313,23 +327,44 @@ public class BlackjackLobbyGUI extends JFrame
 
         if (choice == JOptionPane.YES_OPTION)
         {
+            closeQuietly();
             BlackjackLoginGUI login = new BlackjackLoginGUI();
             login.setVisible(true);
             dispose();
         }
     }
 
-    
- // simple data holder for table properties
+    private void closeQuietly()
+    {
+        if (socket == null)
+        {
+            return;
+        }
+
+        try
+        {
+            socket.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     public static class TableInfo
     {
+        // lightweight table representation for the lobby
+        // holds basic info like player count and bet amount
+        // will likely be replaced or synced with server-side table data
+        public int tableId;
         public String name;
         public int turnSeconds;
         public int bet;
         public int playerCount;
 
-        public TableInfo(String name, int turnSeconds, int bet, int playerCount)
+        public TableInfo(int tableId, String name, int turnSeconds, int bet, int playerCount)
         {
+            this.tableId = tableId;
             this.name = name;
             this.turnSeconds = turnSeconds;
             this.bet = bet;
@@ -338,7 +373,8 @@ public class BlackjackLobbyGUI extends JFrame
 
         public boolean isAvailable()
         {
-            return playerCount < 6 && !name.trim().isEmpty();
+            // OPEN means fewer than 6 players; FULL means 6/6
+            return playerCount < 6;
         }
 
         public String getStatusText()
@@ -353,11 +389,10 @@ public class BlackjackLobbyGUI extends JFrame
         }
     }
 
-    
- // controls how each table row looks
- // handles OPEN vs FULL visuals (color + greying)
     private class TableCellRenderer extends JPanel implements ListCellRenderer<TableInfo>
     {
+        // controls how table rows look
+        // FULL tables get greyed out here
         private JLabel dotLabel;
         private JLabel nameLabel;
         private JLabel infoLabel;
@@ -398,23 +433,14 @@ public class BlackjackLobbyGUI extends JFrame
             nameLabel.setBounds(58, 8, 136, 34);
             infoLabel.setBounds(210, 8, 176, 34);
 
-            boolean blank = value.name.trim().isEmpty();
             boolean available = value.isAvailable();
 
-            dotLabel.setText(blank ? "" : "●");
+            dotLabel.setText("●");
             dotLabel.setForeground(available ? GREEN_DOT : RED_DOT);
-            nameLabel.setText(blank ? "" : value.name);
-            infoLabel.setText(blank ? "" : "Turn: " + value.turnSeconds + "s|Bet: " + value.bet);
+            nameLabel.setText(value.name);
+            infoLabel.setText(value.getStatusText() + " | " + value.playerCount + "/6");
 
-            if (blank)
-            {
-                dotLabel.setBackground(Color.WHITE);
-                nameLabel.setBackground(Color.WHITE);
-                infoLabel.setBackground(Color.WHITE);
-                nameLabel.setForeground(Color.BLACK);
-                infoLabel.setForeground(Color.BLACK);
-            }
-            else if (available)
+            if (available)
             {
                 dotLabel.setBackground(Color.WHITE);
                 nameLabel.setBackground(Color.WHITE);

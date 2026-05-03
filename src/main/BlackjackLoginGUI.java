@@ -2,15 +2,19 @@ package main;
 
 import java.awt.*;
 import java.io.*;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.*;
 
+// login screen
+// handles connecting to server + authenticating user
+// sends USER_LOGIN and receives a User object back
+// routes based on role (player / dealer / developer)
 public class BlackjackLoginGUI extends JFrame
 {
-	// handles login + account creation flow
-	// routes users based on role (player / dealer / developer)
-	// uses local text file for now (no server yet)
-	
-    private static final String USER_FILE_NAME = "users.txt";
+    private static final int SERVER_PORT = 2121;
 
     private static final Color PAGE_GRAY = new Color(53, 53, 53);
     private static final Color TOP_BAR_GRAY = new Color(96, 96, 96);
@@ -28,6 +32,7 @@ public class BlackjackLoginGUI extends JFrame
     private JTextField createUsernameField;
     private JPasswordField createPasswordField;
     private JPasswordField confirmPasswordField;
+    private JTextField createIpField;
 
     private JLabel loginStatusLabel;
     private JLabel createStatusLabel;
@@ -43,7 +48,7 @@ public class BlackjackLoginGUI extends JFrame
         showScreen("LOGIN");
     }
 
-    private void buildFrame() // sets up main window + card layout container
+    private void buildFrame()
     {
         cardLayout = new CardLayout();
         screenPanel = new JPanel(cardLayout);
@@ -51,21 +56,19 @@ public class BlackjackLoginGUI extends JFrame
         add(screenPanel);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 560);
+        setSize(900, 590);
         setLocationRelativeTo(null);
     }
 
-    private void buildLoginScreen() 
+    private void buildLoginScreen()
     {
-    	// builds the login UI (username / password / ip)
-    	// includes login button + link to create account
         JPanel page = buildBasePage("Login");
 
         JPanel centerStack = new JPanel();
         centerStack.setLayout(new BoxLayout(centerStack, BoxLayout.Y_AXIS));
         centerStack.setOpaque(false);
 
-        JPanel loginBox = buildFormBox();
+        JPanel loginBox = buildFormBox(176);
 
         loginUsernameField = makeInputField("Username");
         loginPasswordField = makePasswordField("Password");
@@ -90,10 +93,7 @@ public class BlackjackLoginGUI extends JFrame
         createPanel.setOpaque(false);
         createPanel.add(createButton);
 
-        loginStatusLabel = new JLabel("**Login Success/Failure**", SwingConstants.CENTER);
-        loginStatusLabel.setForeground(Color.WHITE);
-        loginStatusLabel.setFont(new Font("Monospaced", Font.BOLD, 28));
-        loginStatusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        loginStatusLabel = makeStatusLabel("**Login Success/Failure**", 28);
 
         centerStack.add(loginBox);
         centerStack.add(createPanel);
@@ -110,25 +110,25 @@ public class BlackjackLoginGUI extends JFrame
 
     private void buildCreateAccountScreen()
     {
-    	// builds account creation screen
-    	// simple validation + writes new users to file
         JPanel page = buildBasePage("Create Account");
 
         JPanel centerStack = new JPanel();
         centerStack.setLayout(new BoxLayout(centerStack, BoxLayout.Y_AXIS));
         centerStack.setOpaque(false);
 
-        JPanel createBox = buildFormBox();
+        JPanel createBox = buildFormBox(230);
 
         createUsernameField = makeInputField("Username");
         createPasswordField = makePasswordField("Password");
         confirmPasswordField = makePasswordField("Confirm Password");
+        createIpField = makeInputField("IP");
 
-        JPanel fields = new JPanel(new GridLayout(3, 1, 0, 12));
+        JPanel fields = new JPanel(new GridLayout(4, 1, 0, 12));
         fields.setOpaque(false);
         fields.add(createUsernameField);
         fields.add(createPasswordField);
         fields.add(confirmPasswordField);
+        fields.add(createIpField);
 
         JButton createButton = makeArrowButton();
         createButton.addActionListener(event -> createAccount());
@@ -143,10 +143,7 @@ public class BlackjackLoginGUI extends JFrame
         backPanel.setOpaque(false);
         backPanel.add(backButton);
 
-        createStatusLabel = new JLabel("New accounts start as PLAYER with 1000 credits.", SwingConstants.CENTER);
-        createStatusLabel.setForeground(Color.WHITE);
-        createStatusLabel.setFont(new Font("Monospaced", Font.BOLD, 20));
-        createStatusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        createStatusLabel = makeStatusLabel("Server creates new users when username is new.", 20);
 
         centerStack.add(createBox);
         centerStack.add(backPanel);
@@ -161,7 +158,7 @@ public class BlackjackLoginGUI extends JFrame
         screenPanel.add(page, "CREATE");
     }
 
-    private JPanel buildBasePage(String tabText) // shared layout (top bar + background)
+    private JPanel buildBasePage(String tabText)
     {
         JPanel page = new JPanel(new BorderLayout());
         page.setBackground(PAGE_GRAY);
@@ -187,23 +184,21 @@ public class BlackjackLoginGUI extends JFrame
         return page;
     }
 
-    private JPanel buildFormBox() // centered box that holds input fields + button
+    private JPanel buildFormBox(int height)
     {
         JPanel box = new JPanel(new BorderLayout(28, 0));
         box.setBackground(BOX_GRAY);
         box.setBorder(BorderFactory.createEmptyBorder(24, 24, 24, 24));
-        box.setPreferredSize(new Dimension(470, 176));
-        box.setMaximumSize(new Dimension(470, 176));
+        box.setPreferredSize(new Dimension(500, height));
+        box.setMaximumSize(new Dimension(500, height));
         box.setAlignmentX(Component.CENTER_ALIGNMENT);
         return box;
     }
 
- // creates styled input fields with placeholder text
-    
     private JTextField makeInputField(String placeholder)
     {
         JTextField field = new JTextField(placeholder);
-        field.setPreferredSize(new Dimension(310, 43));
+        field.setPreferredSize(new Dimension(330, 43));
         field.setFont(new Font("Monospaced", Font.PLAIN, 34));
         field.setForeground(PLACEHOLDER_GRAY);
         field.setBackground(Color.WHITE);
@@ -215,7 +210,7 @@ public class BlackjackLoginGUI extends JFrame
     {
         JPasswordField field = new JPasswordField(placeholder);
         field.setEchoChar((char) 0);
-        field.setPreferredSize(new Dimension(310, 43));
+        field.setPreferredSize(new Dimension(330, 43));
         field.setFont(new Font("Monospaced", Font.PLAIN, 34));
         field.setForeground(PLACEHOLDER_GRAY);
         field.setBackground(Color.WHITE);
@@ -223,7 +218,7 @@ public class BlackjackLoginGUI extends JFrame
         return field;
     }
 
-    private JButton makeArrowButton() // small submit button (>>)
+    private JButton makeArrowButton()
     {
         JButton button = new JButton(">>");
         button.setFont(new Font("Monospaced", Font.BOLD, 28));
@@ -235,7 +230,7 @@ public class BlackjackLoginGUI extends JFrame
         return button;
     }
 
-    private JButton makeTextLink(String text) // clickable text button (used for navigation)
+    private JButton makeTextLink(String text)
     {
         JButton button = new JButton(text);
         button.setFont(new Font("Monospaced", Font.PLAIN, 28));
@@ -246,53 +241,149 @@ public class BlackjackLoginGUI extends JFrame
         return button;
     }
 
-    
- // validates login inputs
- // checks user file
- // routes user to next screen
+    private JLabel makeStatusLabel(String text, int fontSize)
+    {
+        JLabel label = new JLabel(text, SwingConstants.CENTER);
+        label.setForeground(Color.WHITE);
+        label.setFont(new Font("Monospaced", Font.BOLD, fontSize));
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return label;
+    }
+
     private void login()
     {
         String username = loginUsernameField.getText().trim();
         String password = new String(loginPasswordField.getPassword()).trim();
         String ipAddress = loginIpField.getText().trim();
 
-        if (username.equalsIgnoreCase("Username") || password.equalsIgnoreCase("Password")
-                || ipAddress.equalsIgnoreCase("IP") || ipAddress.equalsIgnoreCase("IP Address")
-                || username.isEmpty() || password.isEmpty() || ipAddress.isEmpty())
+        if (!validLoginFields(username, password, ipAddress))
         {
             loginStatusLabel.setText("**Enter Username/Password/IP**");
             return;
         }
 
-        UserRecord record = findUser(username);
-
-        if (record == null)
-        {
-            loginStatusLabel.setText("**No Account Found**");
-            return;
-        }
-
-        if (!record.password.equals(password))
-        {
-            loginStatusLabel.setText("**Incorrect Password**");
-            return;
-        }
-
-        openNextScreen(record, ipAddress);
+        connectAndLogin(username, password, ipAddress, loginStatusLabel);
     }
 
-    
- // handles role routing:
- // player → lobby
- // dealer → table
- // developer → choose role
-    private void openNextScreen(UserRecord record, String ipAddress)
+    private void createAccount()
     {
-        String role = record.role;
+        String username = createUsernameField.getText().trim();
+        String password = new String(createPasswordField.getPassword()).trim();
+        String confirmPassword = new String(confirmPasswordField.getPassword()).trim();
+        String ipAddress = createIpField.getText().trim();
 
-        if (role.equalsIgnoreCase("DEVELOPER"))
+        if (!validCreateFields(username, password, confirmPassword, ipAddress))
         {
-            String[] options = {"Player", "Dealer"};
+            createStatusLabel.setText("All fields are required.");
+            return;
+        }
+
+        if (!password.equals(confirmPassword))
+        {
+            createStatusLabel.setText("Passwords do not match.");
+            return;
+        }
+
+        connectAndLogin(username, password, ipAddress, createStatusLabel);
+    }
+
+    private boolean validLoginFields(String username, String password, String ipAddress)
+    {
+        return !(username.equalsIgnoreCase("Username")
+                || password.equalsIgnoreCase("Password")
+                || ipAddress.equalsIgnoreCase("IP")
+                || ipAddress.equalsIgnoreCase("IP Address")
+                || username.isEmpty()
+                || password.isEmpty()
+                || ipAddress.isEmpty());
+    }
+
+    private boolean validCreateFields(String username, String password, String confirmPassword, String ipAddress)
+    {
+        return !(username.equalsIgnoreCase("Username")
+                || password.equalsIgnoreCase("Password")
+                || confirmPassword.equalsIgnoreCase("Confirm Password")
+                || ipAddress.equalsIgnoreCase("IP")
+                || ipAddress.equalsIgnoreCase("IP Address")
+                || username.isEmpty()
+                || password.isEmpty()
+                || confirmPassword.isEmpty()
+                || ipAddress.isEmpty());
+    }
+
+    private void connectAndLogin(String username, String password, String ipAddress, JLabel statusLabel)
+    {
+        // opens socket to server using entered IP
+        // sends username + password as a USER_LOGIN message
+        // server returns a User object on success
+        // keeps socket + streams alive and passes them forward
+        Socket socket = null;
+
+        try
+        {
+            socket = new Socket(ipAddress, SERVER_PORT);
+
+            ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
+            objOut.flush();
+
+            ObjectInputStream objIn = new ObjectInputStream(socket.getInputStream());
+
+            List<Object> data = new ArrayList<Object>();
+            data.add(username);
+            data.add(password);
+
+            Message loginMessage = new Message(
+                    MessageClass.USER,
+                    MessageType.USER_LOGIN,
+                    data);
+
+            objOut.writeObject(loginMessage);
+            objOut.flush();
+
+            Message response = (Message) objIn.readObject();
+
+            if (response != null
+                    && response.getmType() == MessageType.USER_LOGIN
+                    && response.getmStatus() == MessageStatus.SUCCESS)
+            {
+                User user = (User) response.getmData().get(0);
+                openNextScreen(user, ipAddress, socket, objIn, objOut);
+            }
+            else
+            {
+                statusLabel.setText("**Login Failed**");
+                closeQuietly(socket);
+            }
+        }
+        catch (IOException e)
+        {
+            statusLabel.setText("**Could Not Connect**");
+            closeQuietly(socket);
+            e.printStackTrace();
+        }
+        catch (ClassNotFoundException e)
+        {
+            statusLabel.setText("**Bad Server Response**");
+            closeQuietly(socket);
+            e.printStackTrace();
+        }
+    }
+
+    private void openNextScreen(User user, String ipAddress,
+            Socket socket, ObjectInputStream objIn, ObjectOutputStream objOut)
+    {
+        // decides where the user goes after login
+        // developers get prompted to choose player or dealer
+        // passes connection forward so later screens can keep using it
+        UserRole role = user.getRole();
+
+        if (role == UserRole.DEVELOPER)
+        {
+            String[] options =
+            {
+                "Player",
+                "Dealer"
+            };
 
             int choice = JOptionPane.showOptionDialog(
                     this,
@@ -306,141 +397,68 @@ public class BlackjackLoginGUI extends JFrame
 
             if (choice == 1)
             {
-                role = "DEALER";
+                role = UserRole.DEALER;
             }
             else if (choice == 0)
             {
-                role = "PLAYER";
+                role = UserRole.PLAYER;
             }
             else
             {
                 loginStatusLabel.setText("**Role Choice Cancelled**");
+                closeQuietly(socket);
                 return;
             }
         }
 
-        if (role.equalsIgnoreCase("DEALER"))
+        if (role == UserRole.DEALER)
         {
-            BlackjackDealerTableGUI dealerTable = new BlackjackDealerTableGUI(record.username, ipAddress);
+            BlackjackDealerTableGUI dealerTable = new BlackjackDealerTableGUI(
+                    user.getUserName(),
+                    ipAddress,
+                    socket,
+                    objIn,
+                    objOut);
+
             dealerTable.setVisible(true);
         }
         else
         {
-            BlackjackLobbyGUI lobby = new BlackjackLobbyGUI(record.username, UserRole.PLAYER, record.credits, ipAddress);
+            BlackjackLobbyGUI lobby = new BlackjackLobbyGUI(
+                    user.getUserName(),
+                    UserRole.PLAYER,
+                    user.getCredits(),
+                    ipAddress,
+                    socket,
+                    objIn,
+                    objOut);
+
             lobby.setVisible(true);
         }
 
         dispose();
     }
 
-    
- // validates new account
- // writes to users.txt
-    private void createAccount()
+    private void closeQuietly(Socket socket)
     {
-        String username = createUsernameField.getText().trim();
-        String password = new String(createPasswordField.getPassword()).trim();
-        String confirmPassword = new String(confirmPasswordField.getPassword()).trim();
-
-        if (username.equalsIgnoreCase("Username") || password.equalsIgnoreCase("Password")
-                || confirmPassword.equalsIgnoreCase("Confirm Password")
-                || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty())
+        if (socket == null)
         {
-            createStatusLabel.setText("All fields are required.");
-            return;
-        }
-
-        if (username.contains(",") || password.contains(","))
-        {
-            createStatusLabel.setText("Commas are not allowed.");
-            return;
-        }
-
-        if (!password.equals(confirmPassword))
-        {
-            createStatusLabel.setText("Passwords do not match.");
-            return;
-        }
-
-        if (findUser(username) != null)
-        {
-            createStatusLabel.setText("That username already exists.");
             return;
         }
 
         try
         {
-            writeUser(username, password, "PLAYER", 1000.0f);
-            createStatusLabel.setText("Account created. Log in when ready.");
-            showScreen("LOGIN");
-            loginStatusLabel.setText("**Account Created**");
+            socket.close();
         }
         catch (IOException e)
         {
-            createStatusLabel.setText("Could not save account.");
-        }
-    }
-
-    private UserRecord findUser(String username) // looks up user in file
-    {
-        File userFile = new File(USER_FILE_NAME);
-
-        if (!userFile.exists())
-        {
-            return null;
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(userFile)))
-        {
-            String line;
-
-            while ((line = reader.readLine()) != null)
-            {
-                String[] parts = line.split(",");
-
-                if (parts.length >= 4 && parts[0].equalsIgnoreCase(username))
-                {
-                    return new UserRecord(parts[0], parts[1], parts[2], Float.parseFloat(parts[3]));
-                }
-            }
-        }
-        catch (IOException | NumberFormatException e)
-        {
-            loginStatusLabel.setText("**Could Not Read User File**");
-        }
-
-        return null;
-    }
-
- // appends new user to file
-    private void writeUser(String username, String password, String role, float credits) throws IOException
-    {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_NAME, true)))
-        {
-            writer.write(username + "," + password + "," + role + "," + credits);
-            writer.newLine();
+            e.printStackTrace();
         }
     }
 
     private void showScreen(String screenName)
     {
         cardLayout.show(screenPanel, screenName);
-    }
-
-    private static class UserRecord
-    {
-        private String username;
-        private String password;
-        private String role;
-        private float credits;
-
-        public UserRecord(String username, String password, String role, float credits)
-        {
-            this.username = username;
-            this.password = password;
-            this.role = role;
-            this.credits = credits;
-        }
     }
 
     public static void main(String[] args)
