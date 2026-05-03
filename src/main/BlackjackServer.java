@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.ArrayList;
 //import java.util.*;
 //import java.util.List;
+import java.util.Scanner;
 
 public class BlackjackServer {
 
@@ -38,16 +39,73 @@ public class BlackjackServer {
 	    System.out.println("User Account Created"); // troubleshooting
 	    return newUser;
 	}
+	
+	public void loadUsers() {
+		try {
+			Scanner scanner = new Scanner("");
+			File folder = new File(System.getProperty("user.dir"));
+			File[] listOfFiles = folder.listFiles();
+
+			if (listOfFiles != null) {
+				for (File file : listOfFiles) {
+					if (file.isFile() && file.getName().startsWith("User.")) {
+						// String filename = "User." + userName + ".txt";
+						// String fullPath = folder + "\\" + filename;
+						// File file = new File(fullPath);
+						scanner = new Scanner(file);
+
+						while (scanner.hasNextLine()) {
+							String data = scanner.nextLine();
+							// System.out.println(data); //troubleshooting
+							String[] dataArray = data.split(","); // Split using
+																	// a comma
+
+							// skip empty lines. If invalid data from file is
+							// detected, stop processing.
+							if (dataArray[0] == "") {
+								continue;
+							} else if (dataArray.length != 4) {
+								System.out.println("Corrupted file: skipping " + file);
+								continue;
+							}
+
+							String userNameString = dataArray[0];
+							String passwordString = dataArray[1];
+							String roleString = dataArray[2];
+							UserRole roleRole = UserRole.valueOf(roleString);
+							String creditsString = dataArray[3];
+							float creditsFloat = Float.parseFloat(creditsString);
+
+							User user = new User(userNameString, passwordString, roleRole,
+									creditsFloat);
+
+							for (int i = 0; i < users.size(); i++) {
+								if (users.get(i).equals(user)) {
+									continue;
+								} else {
+									users.add(user);
+								}
+							}
+						}
+					}
+				}
+			}
+			scanner.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
 
 	public static void main(String[] args) {
-		BlackjackServer.getInstance();
-
-		User Paul = new User("paul", "player123");
-		users.add(Paul);
-		User Nick = new User("nick", "dealer123", UserRole.DEALER);
-		users.add(Nick);
-		User Manny = new User("manny", "admin123", UserRole.DEVELOPER);
-		users.add(Manny);
+		BlackjackServer blackjackServer = BlackjackServer.getInstance();
+		blackjackServer.loadUsers();
+		
+//		User Paul = new User("paul", "player123");
+//		users.add(Paul);
+//		User Nick = new User("nick", "dealer123", UserRole.DEALER, 1000f);
+//		users.add(Nick);
+//		User Manny = new User("manny", "admin123", UserRole.DEVELOPER, 1000f);
+//		users.add(Manny);
 		
 //		//troubleshooting
 //		for (User user : users) {
