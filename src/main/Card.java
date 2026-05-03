@@ -26,5 +26,9 @@ public class Card {
 	public void SetLocation(CardLocation location) {
 		this.location = location;
 	}
-
+	
+	@Override() 
+	public String toString(){
+		return (cardValue.getValueString() + "_of_" + cardSuit.getSuitName()).toLowerCase();
+	}
 }
