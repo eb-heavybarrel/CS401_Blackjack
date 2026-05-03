@@ -1,25 +1,33 @@
 package main;
 
 public enum CardValue {
-	TWO ("two", 2),
-	THREE ("three", 3),
-	FOUR ("four", 4),
-	FIVE ("five", 5),
-	SIX ("six", 6),
-	SEVEN ("seven", 7),
-	EIGHT ("eight", 8),
-	NINE ("nine", 9),
-	TEN ("ten", 10),
-	JACK ("j", 10),
-	QUEEN ("q", 10),
-	KING ("k", 10), 
-	ACE ("a", 11);
+	TWO ("2", 2),
+	THREE ("3", 3),
+	FOUR ("4", 4),
+	FIVE ("5", 5),
+	SIX ("6", 6),
+	SEVEN ("7", 7),
+	EIGHT ("8", 8),
+	NINE ("9", 9),
+	TEN ("10", 10),
+	JACK ("Jack", 10),
+	QUEEN ("Queen", 10),
+	KING ("King", 10), 
+	ACE ("Ace", 11);
 	
-	String sVal;
-	int iVal;
+	String valueString;
+	int valueInt;
 	
-	CardValue(String sVal, int iVal) {
-		this.sVal = sVal;
-		this.iVal = iVal;
+	CardValue(String valueString, int valueInt) {
+		this.valueString = valueString;
+		this.valueInt = valueInt;
+	}
+	
+	public String getValueString() {
+		return valueString;
+	}
+	
+	public int getValueInt() {
+		return valueInt;
 	}
 }
