@@ -7,99 +7,70 @@ import java.util.ArrayList;
 //import java.util.List;
 
 public class BlackjackServer {
+
+	private static final BlackjackServer instance = new BlackjackServer();
+	static ArrayList<User> users = new ArrayList<>();
+	// ArrayList<Table> tables = new ArrayList<>();
+
+	private BlackjackServer() {
+	}
+
+	public static BlackjackServer getInstance() {
+		return instance;
+	}
 	
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		ServerSocket server = null;
-		int port = 2121;
-		server = new ServerSocket(port);
-		server.setReuseAddress(true);
-		System.out.println("ServerSocket awaiting connections on port " + port + " ...");
-
-		while (true) {
-			Socket client = server.accept();
-			System.out.println("Connection from " + client.getInetAddress().getHostAddress() 
-					+ ":" + client.getPort());
-
-			ClientHandler clientSocket = new ClientHandler(client);
-			new Thread(clientSocket).start();
-		}
-	}
-}
-
-class ClientHandler implements Runnable {
-	private final Socket clientSocket;
-
-	//private boolean login = false;
-
-	// Constructor
-	public ClientHandler(Socket socket) {
-		this.clientSocket = socket;
+	public User userAccount(String username, String password) {
+	    for (User user : users) {
+	        // login for existing account
+	        if (user.getUserName().equals(username)) {
+	            if (user.login(password)) {
+	                System.out.println("User Login: Successful"); // troubleshooting
+	                return user;
+	            } else {
+	                System.out.println("User Login: failed - incorrect password."); //troubleshooting
+	                return null;
+	            }
+	        }
+	    }
+	    // create account if it doesn't exist
+	    User newUser = new User(username, password);
+	    users.add(newUser);
+	    System.out.println("User Account Created"); // troubleshooting
+	    return newUser;
 	}
 
-	public void run() {
-		ArrayList<User> users = new ArrayList<>();
-		//ArrayList<Table> tables = new ArrayList<>();
-		
-		User Paul = new User("Paul","password123");
+	public static void main(String[] args) {
+		BlackjackServer.getInstance();
+
+		User Paul = new User("paul", "player123");
 		users.add(Paul);
-		User Nick = new User("Nick", "qwerty123", UserRole.DEALER);
+		User Nick = new User("nick", "dealer123", UserRole.DEALER);
 		users.add(Nick);
-		User Manny = new User("Manny", "admin123", UserRole.DEVELOPER);
+		User Manny = new User("manny", "admin123", UserRole.DEVELOPER);
 		users.add(Manny);
 		
-
-		// Input Steams
-		ObjectInputStream objIn = null;
-		InputStream in = null;
-
-		// Output Streams
-		ObjectOutputStream objOut = null;
-		OutputStream out = null;
+//		//troubleshooting
+//		for (User user : users) {
+//			System.out.println(user.getUserName());
+//		}
 		
-		MessageHandler messageHandler = new MessageHandler(users);
+		int port = 2121;
 
-		try {
-			in = clientSocket.getInputStream();
-			out = clientSocket.getOutputStream();
+		try (ServerSocket server = new ServerSocket(port)) {
+			server.setReuseAddress(true);
+			System.out.println("ServerSocket awaiting connections on port " + port + " ...");
 
-			objIn = new ObjectInputStream(in);
-			objOut = new ObjectOutputStream(out);
 			while (true) {
-				Message msg = (Message) objIn.readObject();
-				messageHandler.handleClass(msg);
-				
-//				if (!login) {
-//					if (msg.type == MessageType.LOGIN) {
-//						login = true;
-//						objOut.writeObject(new Message(msg.type, MessageStatus.SUCCESS, "LOGIN SUCCESSFUL"));
-//						objOut.flush();
-//					} else {
-//						objOut.writeObject(new Message(msg.type, MessageStatus.FAILED, "LOGIN BEFORE SENDING ANY MESSAGES"));
-//					}
-//				} else {
-//					if (msg.type == MessageType.TEXT) {
-//						objOut.writeObject(new Message(msg.type, MessageStatus.RECEIVED, msg.value.toUpperCase()));
-//						objOut.flush();
-//						printMessage(msg);
-//					} else if (msg.type == MessageType.LOGOUT) {
-//						objOut.writeObject(new Message(msg.type, MessageStatus.SUCCESS, "LOGOUT SUCCESSFUL"));
-//						objOut.flush();
-//						break;
-//					}
-//				}
+				Socket client = server.accept();
+				System.out.println(
+						"Connection from " + client.getInetAddress().getHostAddress() + ":" + client.getPort());
+
+				ClientHandler clientSocket = new ClientHandler(client);
+				new Thread(clientSocket).start();
 			}
-			//clientSocket.close();
 		} catch (IOException e) {
-			System.out.println("Error while trying to read object");
-		} catch (ClassNotFoundException e) {
-			System.out.println("Error while trying to find type of object");
+			System.out.println("ServerSocket error in BlackjackServer/main ");
+			e.printStackTrace();
 		}
 	}
-	
-//	public void printMessage(Message msg){
-//		System.out.println("Type: " + msg.type);
-//		System.out.println("Status: " + msg.status);
-//		System.out.println("Value: " + msg.value);
-//		System.out.println();
-//	}
 }
