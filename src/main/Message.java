@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Message implements Serializable {
-	
 	private static final long serialVersionUID = 1L;  //Eclipse suggests we need this
 	protected MessageClass mClass;
 	protected MessageType mType;

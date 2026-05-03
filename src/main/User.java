@@ -1,30 +1,36 @@
 package main;
 
-public class User {
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Scanner;
+
+public class User implements Serializable {
+	private static final long serialVersionUID = 1L;  //Eclipse suggests we need this
 	//public static int count = 0;
 	//private int ID;
 	private String userName;
 	private String password;
 	private UserRole role;
-	private float credits;
+	private float credits = 1000.0f;
 	private boolean isLoggedIn = false;
 	
+	//primarily used to create new user in the application.
 	public User(String name, String pwd) {
 		//this.ID = ++count;
 		this.userName = name;
 		this.password = pwd;
 		this.role = UserRole.PLAYER;
-		this.credits = 0;
-		this.isLoggedIn = false;
 	}
 	
-	public User(String name, String pwd, UserRole role) {
+	//primarily used to import users from file.
+	public User(String name, String pwd, UserRole role, float credits) {
 		//this.ID = ++count;
 		this.userName = name;
 		this.password = pwd;
+		this.credits = credits;
 		this.role = role;
-		this.credits = 0;
-		this.isLoggedIn = false;
 	}
 
 	//Setters
@@ -59,10 +65,13 @@ public class User {
 	}
 	
 	//Incrementers
+	
+	//need to check for positive float
 	public void incrementCredits(float credits) {
 		this.credits += credits;
 	}
 
+	//need to check for positive float
 	public void decrementCredits(float credits) {
 		this.credits -= credits;
 	}
@@ -75,26 +84,35 @@ public class User {
 		}
 		return false;
 	}
-	
-	public void loadUser(String userName) {
-		//needs to be implemented
-	}
 		
-	public void saveUser(String userName) {
-		//needs to be implemented
+	public void saveUser() {
+		File folder = new File(System.getProperty("user.dir"));
+		String filename = "User." + userName + ".txt";
+		String fullPath = folder + "\\" + filename;
+		//File file = new File(fullPath);
+		try {
+			FileWriter writer = new FileWriter(fullPath); // Create a writer
+			writer.write(toFile());
+			writer.close(); // close the writer
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public boolean login(String pwd) {
-		if (password.equals(pwd)) {
-			isLoggedIn = true;
-			//do we need trigger a message to client here  with userRole,Credits
-		}
-		return isLoggedIn;
+		System.out.println("User.login ran"); //troubleshooting
+	    isLoggedIn = password.equals(pwd);
+	    return isLoggedIn;
 	}
 		
 	public boolean logout() {
 			this.isLoggedIn = false;
 			return isLoggedIn;
 		}
+	
+	protected String toFile() {
+        String user = userName + "," + password + "," + role + "," + credits;
+        return user;
+    }
 	
 }

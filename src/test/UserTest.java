@@ -28,9 +28,9 @@ class UserTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		player = new User("player", "superSecret");
-		dealer = new User("dealer", "password123", UserRole.DEALER);
+		dealer = new User("dealer", "password123", UserRole.DEALER, 1000f);
 		//dealer.incrementCredits(50.3f);
-		developer = new User("developer", "luggagecobination", UserRole.DEVELOPER);
+		developer = new User("developer", "luggagecobination", UserRole.DEVELOPER, 1000f);
 	}
 
 	@AfterEach
@@ -65,7 +65,7 @@ class UserTest {
 
 	@Test
 	void testGetCredits() {
-		float expectedCredits = 0;
+		float expectedCredits = 1000f;
 		assertEquals(expectedCredits, player.getCredits());
 	}
 	
@@ -76,7 +76,7 @@ class UserTest {
 
 	@Test
 	void testIncrementCredits() {
-		float startingCredits = 0;
+		float startingCredits = 1000.f;
 		float addCredits = 21.3f;
 		player.incrementCredits(addCredits);
 		assertEquals(startingCredits + addCredits, player.getCredits());
@@ -84,10 +84,10 @@ class UserTest {
 
 	@Test
 	void testDecrementCredits() {
-		float creditsadded = 50.3f;
+		float startingCredits = 1000.f;
 		float creditsremoved = 21.3f;
-		float finalCredits = creditsadded - creditsremoved;
-		dealer.incrementCredits(creditsadded);
+		float finalCredits = startingCredits - creditsremoved;
+		//dealer.incrementCredits(startingCredits);
 		dealer.decrementCredits(creditsremoved);
 		assertEquals(finalCredits, dealer.getCredits(), 0.1f);
 	}
@@ -98,10 +98,6 @@ class UserTest {
 		assertAll("Change Password",
 			() -> assertTrue(developer.changePassword(oldPassword, "NewPassword")),
 			() -> assertFalse(dealer.changePassword(oldPassword, "NewPassword")));
-	}
-
-	@Test
-	void testLoadUser() {
 	}
 
 	@Test

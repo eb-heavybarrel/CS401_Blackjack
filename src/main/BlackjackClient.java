@@ -4,90 +4,84 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-//import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class BlackjackClient {
 
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
+	public static void main(String[] args) {
+		User user = null;
 		Scanner sc = new Scanner(System.in);
 		String host;
 		int port = 2121;
-		//String message;
 
-		System.out.println("Enter host ip address: ");
-		host = sc.nextLine();
-		
-		if (host.equals("")) return;
-//		
-//		System.out.println("Enter port: ");
-//		port = sc.nextInt();
-//		
-//		if (port != 1234) return;
-		
-		Socket socket = new Socket(host, port);
-		
-		ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
-		ObjectInputStream objIn = new ObjectInputStream(socket.getInputStream());
-		
-		MessageClass mClass = MessageClass.USER;
-		MessageType mType = MessageType.USER_LOGIN;
-		
-		List<Object> mData = new ArrayList<>();
-		System.out.println("Enter UserName: ");
-		String userName = sc.nextLine();
-		
-		System.out.println("Enter Password: ");
-		String password = sc.nextLine();
+		// System.out.println("Enter host IP address: ");
+		// host = sc.nextLine();
+		//host = "192.168.1.101"; // hardcoding IP address while testing
+		host = "localhost"; // hardcoding localhost while testing
+		if (host.equals(""))
+			return;
 
-		mData.add(userName);
-		mData.add(password);
-		
-		Message loginMessage = new Message(mClass, mType, mData);
-		objOut.writeObject(loginMessage);
-		objOut.flush();
-		
-		Message response = (Message) objIn.readObject();
-		
-		if (response != null) {
-			System.out.println("Message reiceved");
+		try (Socket socket = new Socket(host, port)) {
+			ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
+			objOut.flush();
+			ObjectInputStream objIn = new ObjectInputStream(socket.getInputStream());
+
+			// user login/create account
+			while (user == null) {
+				MessageClass mClass = MessageClass.USER;
+				MessageType mType = MessageType.USER_LOGIN;
+
+				List<Object> mData = new ArrayList<>();
+				System.out.println("Enter UserName: ");
+				String userName = sc.nextLine();
+				mData.add(userName);
+
+				System.out.println("Enter Password: ");
+				String password = sc.nextLine();
+				mData.add(password);
+
+				Message loginMessage = new Message(mClass, mType, mData);
+				objOut.writeObject(loginMessage);
+				objOut.flush();
+
+				Message response = (Message) objIn.readObject();
+
+				if (response != null) {
+					System.out.println("Message received"); // troubleshooting
+					if (response.mType == MessageType.USER_LOGIN
+							&& response.mStatus == MessageStatus.SUCCESS) {
+						user = (User) response.mData.get(0);
+						userName = user.getUserName();
+						System.out.println("User " + userName + " Login successful:"); // troubleshooting
+					} else {
+						System.out.println("User Login: failed - incorrect password"); // troubleshooting
+					}
+				}
+			}
+
+			//System.out.println("passed login stage"); // troubleshooting
+			
+			while(true) {
+						
+	            try {
+					Thread.sleep(30000);
+		            System.out.println("Waiting for 30 seconds...");
+				} catch (InterruptedException e) {
+					System.out.println("Timer interupted");
+					e.printStackTrace();
+				}
+
+//				objOut.writeObject();
+//				objOut.flush();
+			}
+			
+
+		} catch (IOException e) {
+			System.out.println("Error while trying to read object");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			System.out.println("Error while trying to find type of object");
+			e.printStackTrace();
 		}
-
-//		if (response.status != MessageStatus.SUCCESS) {
-//			socket.close();
-//			return;
-//		} else {
-//			printMessage(response);
-//			while (true) {
-//				System.out.println("Write text message. Enter \"logout\" to exit: ");
-//				message = sc.nextLine();
-//
-//				if (message.equalsIgnoreCase("logout")) {
-//					objOut.writeObject(new Message(MessageType.LOGOUT));
-//					objOut.flush();
-//					
-//					Message logoutResponse = (Message) objIn.readObject();
-//					printMessage(logoutResponse);
-//					
-//					socket.close();
-//					break;
-//				} else {
-//					objOut.writeObject(new Message(MessageType.TEXT, MessageStatus.SENT, message));
-//					objOut.flush();
-//					
-//					Message serverResponse = (Message) objIn.readObject();
-//					printMessage(serverResponse);
-//				}
-//			}
-//		}
-
 	}
-
-//	private static void printMessage(Message msg) {
-//		System.out.println("Type: " + msg.type);
-//		System.out.println("Status: " + msg.status);
-//		System.out.println("Value: " + msg.value);
-//		System.out.println();
-//	}
 }
-

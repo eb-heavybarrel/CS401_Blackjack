@@ -1,0 +1,1 @@
+nick,dealer123,DEALER,1000.0
