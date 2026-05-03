@@ -1,6 +1,8 @@
 package main;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Scanner;
 
@@ -83,12 +85,19 @@ public class User implements Serializable {
 		return false;
 	}
 		
-//	public void saveUser() {
-//		//needs to be implemented
-//		// String filename = "User." + userName + ".txt";
-//		// String fullPath = folder + "\\" + filename;
-//		// File file = new File(fullPath);
-//	}
+	public void saveUser() {
+		File folder = new File(System.getProperty("user.dir"));
+		String filename = "User." + userName + ".txt";
+		String fullPath = folder + "\\" + filename;
+		//File file = new File(fullPath);
+		try {
+			FileWriter writer = new FileWriter(fullPath); // Create a writer
+			writer.write(toFile());
+			writer.close(); // close the writer
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public boolean login(String pwd) {
 		System.out.println("User.login ran"); //troubleshooting

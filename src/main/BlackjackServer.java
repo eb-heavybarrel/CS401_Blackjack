@@ -49,22 +49,19 @@ public class BlackjackServer {
 			if (listOfFiles != null) {
 				for (File file : listOfFiles) {
 					if (file.isFile() && file.getName().startsWith("User.")) {
-						// String filename = "User." + userName + ".txt";
-						// String fullPath = folder + "\\" + filename;
-						// File file = new File(fullPath);
 						scanner = new Scanner(file);
 
 						while (scanner.hasNextLine()) {
 							String data = scanner.nextLine();
 							// System.out.println(data); //troubleshooting
-							String[] dataArray = data.split(","); // Split using
-																	// a comma
+							String[] dataArray = data.split(",");
 
-							// skip empty lines. If invalid data from file is
-							// detected, stop processing.
+							// skip empty lines.
 							if (dataArray[0] == "") {
 								continue;
-							} else if (dataArray.length != 4) {
+							}
+							// skip corrupted data.
+							else if (dataArray.length != 4) {
 								System.out.println("Corrupted file: skipping " + file);
 								continue;
 							}
@@ -79,12 +76,8 @@ public class BlackjackServer {
 							User user = new User(userNameString, passwordString, roleRole,
 									creditsFloat);
 
-							for (int i = 0; i < users.size(); i++) {
-								if (users.get(i).equals(user)) {
-									continue;
-								} else {
-									users.add(user);
-								}
+							if (!users.contains(user)) {
+								users.add(user);
 							}
 						}
 					}
@@ -100,16 +93,9 @@ public class BlackjackServer {
 		BlackjackServer blackjackServer = BlackjackServer.getInstance();
 		blackjackServer.loadUsers();
 		
-//		User Paul = new User("paul", "player123");
-//		users.add(Paul);
-//		User Nick = new User("nick", "dealer123", UserRole.DEALER, 1000f);
-//		users.add(Nick);
-//		User Manny = new User("manny", "admin123", UserRole.DEVELOPER, 1000f);
-//		users.add(Manny);
-		
 //		//troubleshooting
 //		for (User user : users) {
-//			System.out.println(user.getUserName());
+//			System.out.println(user.getUserName() + " , " + user.getRole() + " , " + user.getCredits());
 //		}
 		
 		int port = 2121;
