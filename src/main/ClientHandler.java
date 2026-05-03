@@ -57,7 +57,7 @@ class ClientHandler implements Runnable {
 						user = instance.userAccount(username, password);
 			
 						if (user != null) {
-							user.saveUser();
+							//user.saveUser();
 							outMsg = new Message(MessageClass.USER, MessageType.USER_LOGIN,
 									MessageStatus.SUCCESS, List.of(user));
 						} else {

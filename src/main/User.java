@@ -1,6 +1,8 @@
 package main;
 
+import java.io.File;
 import java.io.Serializable;
+import java.util.Scanner;
 
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;  //Eclipse suggests we need this
@@ -12,6 +14,7 @@ public class User implements Serializable {
 	private float credits = 1000.0f;
 	private boolean isLoggedIn = false;
 	
+	//primarily used to create new user in the application.
 	public User(String name, String pwd) {
 		//this.ID = ++count;
 		this.userName = name;
@@ -19,10 +22,12 @@ public class User implements Serializable {
 		this.role = UserRole.PLAYER;
 	}
 	
-	public User(String name, String pwd, UserRole role) {
+	//primarily used to import users from file.
+	public User(String name, String pwd, UserRole role, float credits) {
 		//this.ID = ++count;
 		this.userName = name;
 		this.password = pwd;
+		this.credits = credits;
 		this.role = role;
 	}
 
@@ -77,14 +82,13 @@ public class User implements Serializable {
 		}
 		return false;
 	}
-	
-	public void loadUser(String userName) {
-		//needs to be implemented
-	}
 		
-	public void saveUser(String userName) {
-		//needs to be implemented
-	}
+//	public void saveUser() {
+//		//needs to be implemented
+//		// String filename = "User." + userName + ".txt";
+//		// String fullPath = folder + "\\" + filename;
+//		// File file = new File(fullPath);
+//	}
 	
 	public boolean login(String pwd) {
 		System.out.println("User.login ran"); //troubleshooting
@@ -96,5 +100,10 @@ public class User implements Serializable {
 			this.isLoggedIn = false;
 			return isLoggedIn;
 		}
+	
+	protected String toFile() {
+        String user = userName + "," + password + "," + role + "," + credits;
+        return user;
+    }
 	
 }
