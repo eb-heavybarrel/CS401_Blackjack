@@ -28,9 +28,9 @@ class UserTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		player = new User("player", "superSecret");
-		dealer = new User("dealer", "password123", UserRole.DEALER);
+		dealer = new User("dealer", "password123", UserRole.DEALER, 1000f);
 		//dealer.incrementCredits(50.3f);
-		developer = new User("developer", "luggagecobination", UserRole.DEVELOPER);
+		developer = new User("developer", "luggagecobination", UserRole.DEVELOPER, 1000f);
 	}
 
 	@AfterEach
@@ -98,10 +98,6 @@ class UserTest {
 		assertAll("Change Password",
 			() -> assertTrue(developer.changePassword(oldPassword, "NewPassword")),
 			() -> assertFalse(dealer.changePassword(oldPassword, "NewPassword")));
-	}
-
-	@Test
-	void testLoadUser() {
 	}
 
 	@Test

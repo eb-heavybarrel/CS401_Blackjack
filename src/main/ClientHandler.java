@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.List;
 
 class ClientHandler implements Runnable {
@@ -57,6 +57,7 @@ class ClientHandler implements Runnable {
 						user = instance.userAccount(username, password);
 			
 						if (user != null) {
+							user.saveUser();
 							outMsg = new Message(MessageClass.USER, MessageType.USER_LOGIN,
 									MessageStatus.SUCCESS, List.of(user));
 						} else {
