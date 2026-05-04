@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 public class Hand {
 	private ArrayList<Card> cards;
-
+	private HandState handState;
 	private int bet;
 	private int handValue;
+	private int aceCount;
 
 	public void placeBet(int bet) {
 		this.bet = bet;
@@ -15,10 +16,22 @@ public class Hand {
 	public Hand() {
 		cards = new ArrayList<Card>();
 		handValue = 0;
+		bet = 0;
 	}
 
 	public int getHandValue() {
 		return handValue;
+	}
+	
+	public int getBet() {
+		return bet;
+	}
+	public HandState getHandState (){
+		return handState;
+	}
+	
+	public boolean hasBlackJack() {
+		return cards.size() == 2 && handValue == 21;
 	}
 
 	public void resetHand() {
@@ -31,9 +44,13 @@ public class Hand {
 
 		updateHandValue();
 	}
+	
+	public void setHandState(HandState state) {
+		handState = state;
+	}
 
 	private void updateHandValue() {
-		int aceCount = 0;
+		aceCount = 0;
 		int modifiedAces = 0;
 		handValue = 0;
 

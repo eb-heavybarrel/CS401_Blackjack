@@ -10,11 +10,8 @@ public class StandaloneBlackJack {
 
 		table.PlayerJoin("Manuel");
 		table.PlayerJoin("Paul");
-		// table.PlayerJoin("Nick");
-
-		// Betting Round
+		table.PlayerJoin("Nick");
 		
-		// Game Loop
 		game.play();
 	}
 }
