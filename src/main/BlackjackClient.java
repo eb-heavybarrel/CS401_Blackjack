@@ -14,10 +14,10 @@ public class BlackjackClient {
 		String host;
 		int port = 2121;
 
-		// System.out.println("Enter host IP address: ");
-		// host = sc.nextLine();
-		//host = "192.168.1.101"; // hardcoding IP address while testing
-		host = "localhost"; // hardcoding localhost while testing
+		 System.out.println("Enter host IP address: ");
+		 host = sc.nextLine();
+//		host = "192.168.1.101"; // hardcoding IP address while testing
+//		host = "localhost"; // hardcoding localhost while testing
 		if (host.equals(""))
 			return;
 
