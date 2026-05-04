@@ -2,6 +2,6 @@ package main;
 
 public enum HandState {
 	PUSH,
-	BUST,
+	LOSER,
 	WINNER,
 }

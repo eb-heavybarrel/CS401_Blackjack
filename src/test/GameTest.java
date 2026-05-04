@@ -153,7 +153,7 @@ class GameTest {
 		
 		game.testDetermineWinner();
 		
-		assertEquals(dealer.getHandState(), HandState.BUST);
+		assertEquals(dealer.getHandState(), HandState.LOSER);
 		assertEquals(manuel.getHandState(), HandState.WINNER);
 	}
 	
@@ -178,9 +178,9 @@ class GameTest {
 		
 		game.testDetermineWinner();
 		
-		assertEquals(dealer.getHandState(), HandState.BUST);
-		assertEquals(nick.getHandState(), HandState.BUST);
-		assertEquals(paul.getHandState(), HandState.BUST);
+		assertEquals(dealer.getHandState(), HandState.LOSER);
+		assertEquals(nick.getHandState(), HandState.LOSER);
+		assertEquals(paul.getHandState(), HandState.LOSER);
 		assertEquals(manuel.getHandState(), HandState.WINNER);
 	}
 	

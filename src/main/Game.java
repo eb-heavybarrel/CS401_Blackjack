@@ -64,7 +64,7 @@ public class Game {
 				if (handValue > 21) {
 					System.out.println(name + " Busted!");
 					System.out.println(name + "'s final hand value: " + handValue);
-					hand.setHandState(HandState.BUST);
+					hand.setHandState(HandState.LOSER);
 					stand = true;
 					
 					continue;
@@ -172,7 +172,7 @@ public class Game {
 		if (dealerHand.getHandValue() > 21) { // Dealer's hand was a bust
 			System.out.println("Dealer Busted!");
 			System.out.println("Dealer's final hand value: " + dealerHand.getHandValue());
-			dealerHand.setHandState(HandState.BUST);
+			dealerHand.setHandState(HandState.LOSER);
 			dealerStand = true;
 			return;
 		} else if (dealerHand.getHandValue() <= 21 && dealerHand.getHandValue() > 16) { // Dealer can't hit on a soft 17
@@ -208,7 +208,7 @@ public class Game {
 			String player = table.getPlayer(i).UserName();
 
 			if (dealerHand.hasBlackJack() && !hand.hasBlackJack()) {
-				hand.setHandState(HandState.BUST);
+				hand.setHandState(HandState.LOSER);
 				System.out.println(player + ": Loser");
 			} else if (dealerHand.hasBlackJack() && hand.hasBlackJack()) {
 				hand.setHandState(HandState.PUSH);
@@ -217,15 +217,15 @@ public class Game {
 				System.out.println("Dealer: Push");
 			} else if (hand.hasBlackJack() && !dealerHand.hasBlackJack()) {
 				hand.setHandState(HandState.WINNER);
-				dealerHand.setHandState(HandState.BUST);
+				dealerHand.setHandState(HandState.LOSER);
 				System.out.println(player + ": Winner");
 				System.out.println("Dealer: Loser");
-			} else if (dealerHand.getHandValue() > hand.getHandValue() && dealerHand.getHandState() != HandState.BUST) {
-				hand.setHandState(HandState.BUST);
+			} else if (dealerHand.getHandValue() > hand.getHandValue() && dealerHand.getHandState() != HandState.LOSER) {
+				hand.setHandState(HandState.LOSER);
 				System.out.println(player + ": Loser");
-			} else if (hand.getHandValue() > dealerHand.getHandValue() && hand.getHandState() != HandState.BUST) {
+			} else if (hand.getHandValue() > dealerHand.getHandValue() && hand.getHandState() != HandState.LOSER) {
 				hand.setHandState(HandState.WINNER);
-				dealerHand.setHandState(HandState.BUST);
+				dealerHand.setHandState(HandState.LOSER);
 				System.out.println(player + ": Winner");
 				System.out.println("Dealer: Loser");
 			} else if (hand.getHandValue() == dealerHand.getHandValue()) {
@@ -234,10 +234,10 @@ public class Game {
 				System.out.println(player + ": Push");
 				System.out.println("Dealer: Push");
 			} else if (hand.getHandState() != HandState.WINNER && hand.getHandState() != HandState.PUSH) {
-				hand.setHandState(HandState.BUST);
+				hand.setHandState(HandState.LOSER);
 				System.out.println("Dealer: Loser");
 			}
-			if (dealerHand.getHandState() != HandState.PUSH && dealerHand.getHandState() != HandState.BUST) {
+			if (dealerHand.getHandState() != HandState.PUSH && dealerHand.getHandState() != HandState.LOSER) {
 				dealerHand.setHandState(HandState.WINNER);
 				System.out.println("Dealer: Winner");
 			}
