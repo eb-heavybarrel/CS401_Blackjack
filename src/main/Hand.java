@@ -4,22 +4,16 @@ import java.util.ArrayList;
 
 public class Hand {
 	private ArrayList<Card> cards;
-	private CardLocation player;
 
 	private int bet;
 	private int handValue;
-
-	public Hand(CardLocation player) {
-		this.player = player;
+	
+	public void placeBet(int bet) {
+		this.bet = bet;
+	}
+	
+	public Hand() {
 		cards = new ArrayList<Card>();
-	}
-
-	public void placeBet() {
-
-	}
-
-	public void playHand() {
-
 	}
 	
 	public int getHandValue() {
@@ -29,5 +23,9 @@ public class Hand {
 	public void resetHand() {
 		handValue = 0;
 		cards.clear();
+	}
+	public void addCard(Card card) {
+		cards.add(card);
+		handValue += card.getValue().getValueInt();
 	}
 }

@@ -6,14 +6,10 @@ public class Shoe {
 
 	private ArrayDeque<Card> cards;
 	private int shoeSize;
-	private int cardsRemaining;
 	private int triggerShuffleSize = 60;
 
 	public Shoe(int shoeSize) {
 		this.shoeSize = shoeSize;
-		int totalCards = shoeSize * 52;
-
-		cardsRemaining = totalCards;
 		generateDeck();
 	}
 
@@ -42,9 +38,7 @@ public class Shoe {
 	public Card deal() {
 		if (cards.size() < triggerShuffleSize) {
 			generateDeck();
-			this.cardsRemaining = cards.size();
 		}
-		cardsRemaining--;
 		return cards.pop();
 	}
 }

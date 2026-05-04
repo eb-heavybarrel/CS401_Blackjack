@@ -3,12 +3,10 @@ package main;
 public class Card {
 	private CardSuit cardSuit;
 	private CardValue cardValue;
-	private CardLocation location;
 
 	public Card(CardSuit cardSuit, CardValue cardValue) {
 		this.cardSuit = cardSuit;
 		this.cardValue = cardValue;
-		this.location = CardLocation.SHOE;
 	}
 
 	public CardSuit getSuit() {
@@ -17,14 +15,6 @@ public class Card {
 
 	public CardValue getValue() {
 		return this.cardValue;
-	}
-
-	public CardLocation getLocation() {
-		return this.location;
-	}
-
-	public void SetLocation(CardLocation location) {
-		this.location = location;
 	}
 	
 	@Override() 
