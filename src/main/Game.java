@@ -1,19 +1,32 @@
 package main;
 
+
 public class Game {
+	private Table table;
+	
+	private Hand dealerHand;
+	
 	private Shoe shoe;
-	private Hand h_Player;
-	private Hand h_Dealer;
 	public boolean canBet;
 	
-	public Game(Shoe shoe, Hand player, Hand dealer) {
-		this.shoe = shoe;
-		h_Player = player;
-		h_Dealer = dealer;
+	public Game(Table table) {
+		this.table = table;
+		this.shoe = table.getShoe();
+		
+		dealerHand = new Hand();
 	}
 	
-	public void hit(Card card) {
-		
+	public Hand DealerHand() {
+		return dealerHand;
+	}
+	
+	public void hit(int seatIndex) {
+		Card card = shoe.deal();
+		if (seatIndex == -1) {
+			dealerHand.addCard(card);
+			return;
+		}
+		table.getPlayer(seatIndex).getHand().addCard(card);	
 	}
 	
 	public void stand() {
